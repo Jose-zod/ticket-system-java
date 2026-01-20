@@ -11,6 +11,9 @@ public class TicketRepository {
     private final List<Ticket> tickets = new ArrayList<>();
 
     public void save(Ticket ticket) {
+        if (ticket == null) {
+            throw new IllegalArgumentException("Ticket cannot be null");
+        }
         tickets.add(ticket);
     }
 

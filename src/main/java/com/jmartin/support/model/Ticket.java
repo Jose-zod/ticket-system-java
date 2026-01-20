@@ -1,5 +1,4 @@
 package com.jmartin.support.model;
-import com.jmartin.support.model.TicketStatus;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,13 +14,14 @@ public class Ticket {
     private User assignedTo;
     private LocalDateTime createdAt;
 
-    public Ticket(String title, String description, User createdBy, TicketStatus status) {
+    public Ticket(String title, String description, User createdBy) {
         this.id = COUNTER.getAndIncrement();
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
-        this.status = status;
+        this.status = TicketStatus.OPEN;
         this.createdAt = LocalDateTime.now();
+
     }
 
     public int getId() {
@@ -32,16 +32,20 @@ public class Ticket {
         return status;
     }
 
-    public void setStatus(TicketStatus status) {
-        this.status = status;
-    }
 
-    public void assignTo(User user) {
+    public void  assignTo(User user) {
+        if (status == TicketStatus.CLOSED) {
+            throw new IllegalStateException("Cannot assign closed ticket ");
+        }
         this.assignedTo = user;
         this.status = TicketStatus.IN_PROGRESS;
+
     }
 
     public void close() {
+        if (status == TicketStatus.CLOSED) {
+            throw new IllegalStateException("Ticket already closed");
+        }
         this.status = TicketStatus.CLOSED;
     }
 }
